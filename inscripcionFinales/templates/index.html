@@ -1,0 +1,36 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+
+<div class="index-body" >
+  {%if user.is_authenticated and not user.is_staff%}
+  <br>
+  <p style="margin-left: -550px;">Estudiante</p>
+    <h2>Hola {{user.email}}, bienvenido!</h2>
+    <div class="index-body" style="margin-left: -550px; margin-top: 50px">
+      <h4>¿Qué desea hacer?</h4>
+    <ul>
+      <li><h6><a href='#'>Inscribirse a una materia</a></h6></li>
+      <li><h6><a href='#'>Inscribirse a un final</a></h6></li>
+    </ul>
+  </div>
+  {%elif user.is_authenticated and user.is_staff%}  
+  <br>
+    <h2>Hola {{user.email}}, bienvenido!</h2>
+    <div class="index-body" style="margin-left: -550px; margin-top: 50px">
+      <h4 style="margin-top: 50px; margin-left: 700px;">¿Qué desea hacer?</h4>
+    <ul style="margin-top: 50px; margin-left: 580px; list-style: none;">
+      <li><h6><a href='#' style="text-decoration: none; font-size: 20px">Ver solicitudes de inscripción a materias</a></h6></li>
+      <li><h6><a href='#' style="text-decoration: none; font-size: 20px">Ver solicitudes de inscripción a finales</a></h6></li>
+    </ul>
+  </div>
+  {%else%}
+  <br>
+    <h2>Hola, bienvenidos!</h2>
+    <h4>Para acceder al sistema, loguéese.<br>Si no posee usuario, póngase en contacto con el instituto<br>Muchas Gracias!</h4>
+  {%endif%}
+</div>
+
+{% endblock %}

@@ -1,0 +1,151 @@
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.views import LoginView, LogoutView    
+from .models import Usuario, Carrera, Instituto, Materia, usuarios_materia
+from django.views.generic import CreateView,TemplateView,ListView,UpdateView,DeleteView
+from django.core.mail import send_mail
+from django.contrib.auth import *
+from django.contrib import messages
+
+from .forms import (institutoForms, registri_user_form,
+carreraForm,profile_students_form)
+
+
+
+
+
+# Create your views here.
+
+class HomePageView(TemplateView):
+    template_name = 'index.html'
+    model=Usuario
+
+    def get(self, request):
+        return  render(request, 'index.html')
+    
+
+class CustomLoginView(LoginView):
+  pass
+
+       
+class CustomLogoutView(LogoutView):
+
+    def get(self,request):
+        logout(request)
+        messages.success(request, 'Su sesión se ha cerrado correctamente. Hasta la próxima!')
+        return redirect("/")
+
+
+
+class registerView(CreateView):
+    
+    model = Usuario
+    form_class = registri_user_form
+    
+
+    def form_valid(self, form):
+        
+        usuario = form.cleaned_data.get('username')
+        email = form.cleaned_data.get('email')
+        password = form.cleaned_data.get('password1')
+        password = form.cleaned_data.get('password2')
+        usuario = authenticate(email=email, password=password)
+    
+        
+        form.save()
+        login(self.request, usuario)
+        
+        send_mail('subject', f'\n-Su Usuario es: {email} \n- Su contraseña es: {password}\nLink para cambiar contraseña es: http://http://127.0.0.1:8000/change_password/<int:pk>,',from_email='webmaster.isfdyt210@gmail.com',recipient_list = [email])
+        
+        return redirect('/user_list')
+    
+
+
+   
+       
+class editUser(UpdateView):
+    model = Usuario
+    form_class = profile_students_form
+    template_name = 'registration/edit_profile.html'
+    success_url = '/'
+    
+    
+     
+class profileviews(TemplateView):
+    model = Usuario 
+  
+
+class deleteUser(DeleteView):
+    model = Usuario
+    template_name ='registration/delete_user.html'
+    success_url = '/user_list'
+         
+
+class institutoView(CreateView):
+    model = Instituto
+    form_class = institutoForms
+
+    def form_valid(self, form):
+        form.save()
+        Instituto = form.cleaned_data.get('nombre_instituto')
+        email = form.cleaned_data.get('email_instituto')
+      
+        
+        return redirect('/')
+    
+
+class carreraView(CreateView):
+       
+    model = Carrera
+    form_class = carreraForm
+
+    def form_valid(self, form):
+        form.save()
+        Carrera = form.cleaned_data.get('nombre_carrera')
+        Resolucion = form.cleaned_data.get('num_resolucion')
+      
+        
+        return redirect('/')
+
+
+
+ 
+class listUser(ListView):
+    model = Usuario
+    template_name = 'registration/list_user.html'
+   
+class showUser(ListView):
+    model = Usuario
+    template_name = 'registration/show_user.html'
+
+def lista_materias(request):
+    # Obtener todas las materias disponibles
+    materias_disponibles = Materia.objects.all()
+
+    # Obtener las materias en las que el estudiante actual está inscrito
+    inscripciones_estudiante = usuarios_materia.objects.filter(usuario=request.user)
+
+    # Obtener las materias en las que aún hay cupo
+    #materias_habilitadas = [materia for materia in materias_disponibles if usuarios_materia.cupo > inscripciones_estudiante.filter(materia=materia).count()]
+
+    return render(request, 'registration/lista_materias.html', {'materias': inscripciones_estudiante})
+
+#def inscribirse_materia(request, materia_id):
+    #materia = Materia.objects.get(pk=materia_id)
+
+    # Verificar si el estudiante ya está inscrito en esta materia
+    #if inscripcion.objects.filter(estudiante=request.user, materia=materia).exists():
+        #return redirect('lista_materias')
+
+    # Verificar si aún hay cupo en la materia
+    #inscripciones_materia = inscripcion.objects.filter(materia=materia)
+    #if inscripciones_materia.count() >= materia.cupo:
+    #    return redirect('lista_materias')
+
+    # Realizar la inscripción
+    #inscripcion = inscripcion(estudiante=request.user, materia=materia)
+    #inscripcion.save()
+
+        #return redirect('lista_materias')
+

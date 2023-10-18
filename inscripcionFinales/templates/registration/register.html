@@ -1,0 +1,116 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Registro de usuario{% endblock %}
+
+{% block content %}
+
+{% if request.user.is_staff or request.user.is_superuser or request.user.admin %}
+
+<div id="registracion">  
+    <form method="POST" class="form">
+        <div class="reg-rectangulo1">
+            <p class = "text-center reg-title">
+              Completar los siguientes campos:
+            </p>
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div id="register-error">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  <p>No se pudo enviar el formulario. Verifique los datos por favor.</p>
+                </div>
+              </div>
+              {% endif %}
+
+            <p class = "text-center">
+                <label for="id_dni">DNI:</label>
+                <br>
+                {{ form.dni }}
+                {% if form.dni.errors %}
+                <div id="register-error">
+                  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <p>El DNI ya está en uso.</p>
+                  </div>
+                </div>
+                {%endif%}
+            </p>
+            <p class = "text-center">
+                <label for="id_nombres">Nombres:</label>
+                <br>
+                {{ form.nombres }}
+            </p>
+            <p class = "text-center">
+                <label for="id_apellidos">Apellido:</label>
+                <br>
+                {{ form.apellidos }}
+            </p>
+            <p class = "text-center">
+                <label for="id_email">Email:</label>
+                <br>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <div id="register-error">
+                  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <p>El email ya existe.</p>
+                  </div>
+                </div>
+                {%endif%}
+            </p>
+            <!-- <p class = "aclaracion"> 
+                Su password debe contener:
+                <li class = "aclaracion">8 caracteres</li>
+                <li class = "aclaracion">Numeros</li>
+                <li class = "aclaracion">Letras</li>
+                <li class = "aclaracion">Combine mayúsculas y minúsculas</li> 
+            </p>
+            <p class = "text-center">
+                <label for="id_password1">Password:</label>
+                <br>
+                {{ form.password1 }}
+            </p>
+            <p class = "text-center">
+                <label for="id_password2">Repita password:</label>
+                <br>
+                {{ form.password2 }}
+            </p> -->
+            <p class = "text-center">
+                <label for="id_groups">Seleccione grupo:</label>
+                <br>
+                {{ form.groups}}
+            </p>
+            <p class = "text-center display-none">
+                <label for="id_carrera">Seleccione carrera:</label>
+                <br>
+                {{ form.carrera}}
+            </p>
+        </div>
+
+        <div class="reg-rectangulo2">
+            <div class="logo-registracion only-lt">
+                <img src="/static/imagenes/Logo_i210_fondo_trans.png" class="logo-reg only-lt">
+            </div>
+            <div class="botones-registracion">
+                <button type="submit" class="btn btn-blue">Registrar</button>
+                <div id="volver_usuario">
+                    <a href="/user_list/">Volver a Usuarios</a>
+                </div>
+            </div>
+        </div>   
+    </form>  
+</div>
+
+{% else %}
+
+<div class="card">
+  <h3>Ud no tiene los permisos para acceder a esta página</h3>
+<div class="text-center">
+    <img src="/static/imagenes/error403.png" class=""></img>
+  <h3>No deberías estar acá. Para volver, <a href="/">hace click acá</a></h3>
+</div>
+
+{%endif%}
+
+{% endblock %}
